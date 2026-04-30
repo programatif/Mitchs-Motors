@@ -1,0 +1,14 @@
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\Mitch's Motors.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\Mitch's Motors.AssemblyInfoInputs.cache
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\Mitch's Motors.AssemblyInfo.cs
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\Mitch's Motors.csproj.CoreCompileInputs.cache
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\bin\Debug\net10.0\Mitch's Motors.exe
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\bin\Debug\net10.0\Mitch's Motors.deps.json
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\bin\Debug\net10.0\Mitch's Motors.runtimeconfig.json
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\bin\Debug\net10.0\Mitch's Motors.dll
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\bin\Debug\net10.0\Mitch's Motors.pdb
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\Mitch's Motors.dll
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\refint\Mitch's Motors.dll
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\Mitch's Motors.pdb
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\Mitch's Motors.genruntimeconfig.cache
+C:\Users\Harry\Documents\Uni\Level 4\Programming\Assignment 2\Code\Mitch's Motors\Mitch's Motors\obj\Debug\net10.0\ref\Mitch's Motors.dll

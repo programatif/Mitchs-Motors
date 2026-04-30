@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "Mitch's Motors/1.0.0": {
+        "runtime": {
+          "Mitch's Motors.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Mitch's Motors/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
