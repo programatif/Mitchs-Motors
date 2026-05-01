@@ -1,9 +1,12 @@
 ﻿using Mitch_s_Motors;
 using System.Collections;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 // Initialise lists to store all user-created objects in memory to be called and used in the menu
 List<Vehicle> vehicles = new List<Vehicle>();
-List<Customer> customer = new List<Customer>();
+List<Customer> customers = new List<Customer>();
 List<Staff> staffs = new List<Staff>();
 List<Booking> bookings = new List<Booking>();
 
@@ -12,18 +15,59 @@ List<Booking> bookings = new List<Booking>();
 Dictionary<string, Action> menuItems = new Dictionary<string, Action>
 {
 	{ "Register New Vehicle", addVehicle },
-	{ "View All Vehicles", viewVehicles }
+	{ "View All Vehicles", viewVehicles },
+	{ "Add New Staff Member", addStaff },
+	{ "View All Staff Members", viewStaff },
+	{ "Add New Customer", addCustomer },
+	{ "View All Customers", viewCustomers }
 };
 
 
 // Functions
+
+// Output a long list of tags to break up the terminal content
+static void tags()
+{
+    Console.WriteLine("\n######################################################\n");
+} 
+
 // Create a new vehicle and save it in the vehicles list
 void addVehicle()
 {
 	try
 	{
-        Console.WriteLine($"\n**Register New Vehicle**\n ");
-	}
+		tags();
+        Console.WriteLine($"\n**Register New Vehicle**\n");
+
+        Console.WriteLine("Enter Registration: ");
+        string Registration = Console.ReadLine();
+
+        Console.WriteLine("Enter Type (e.g., Sedan, SUV): ");
+        string Type = Console.ReadLine();
+
+        Console.WriteLine("Enter Price: ");
+        double Price = double.Parse(Console.ReadLine());
+
+        Console.WriteLine("Enter Colour: ");
+        string Colour = Console.ReadLine();
+
+        Console.WriteLine("Enter Number of Seats: ");
+        int Seats = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Enter Boot Space (Liters): ");
+        double Boot_space = double.Parse(Console.ReadLine());
+
+        Console.WriteLine("Enter Brand: ");
+        string Brand = Console.ReadLine();
+
+        Console.WriteLine("Enter Year: ");
+        int Year = int.Parse(Console.ReadLine());
+
+        Vehicle new_vehicle = new Vehicle(Registration, Type, Price, Colour, Seats, Boot_space, Brand, Year);
+		vehicles.Add( new_vehicle );
+
+        Console.WriteLine("Vehicle Successfully Registered");
+    }
 	catch (Exception)
 	{
 
@@ -31,21 +75,194 @@ void addVehicle()
 	}
 }
 
-// Loop through and output all vehicles on the vehicles list
+// Loop through and output all vehicles on the vehicles list, also filter down to individual vehicles
 void viewVehicles()
 {
-	try
+	while (true)
 	{
-        Console.WriteLine($"\n**All Vehicles**\n");
-        
-	}
-	catch (Exception)
-	{
+		try
+		{
+			tags();
+			Console.WriteLine($"\n**All Vehicles**\n");
 
-		throw;
+			int index = 1;
+			if (vehicles.Count > 0)
+			{
+				foreach (Vehicle vehicle in vehicles)
+				{
+					Console.WriteLine($"    {index++}) {vehicle.Registration}");
+				}
+			}
+
+			Console.WriteLine($"\nIf you wish to view details about a single car, enter its associated number - or press \"{index}\" to exit");
+
+			string input = Console.ReadLine();
+			int convertedInput = int.Parse(input);
+
+			if (convertedInput > 0 && convertedInput < index)
+			{
+				Vehicle selectedVehicle = vehicles[convertedInput - 1];
+
+				index = 1;
+
+				Console.WriteLine("\n");
+				tags();
+				List<string> keys = selectedVehicle.summary_dict().Keys.ToList();
+
+				foreach (string info in keys)
+				{
+					Console.WriteLine($"    {index++}) {info}: {selectedVehicle.summary_dict()[info]}");
+				}
+
+
+				// TODO: Finish editing vehicles - works other than getting correct datatype to save the input as
+
+				//Console.WriteLine($"If you wish to edit any detials about this car, press the associated number. Else press \"{index}\".");
+
+				//string secondSelect = Console.ReadLine();
+				//int convertedSecondSelect = int.Parse(secondSelect);
+
+				//if (convertedSecondSelect > 0 && convertedSecondSelect < index)
+				//{
+				//	tags();
+				//	Console.WriteLine($"What should {keys[convertedSecondSelect - 1]} be updated to");
+				//	string update = Console.ReadLine();
+				//	selectedVehicle
+				//}
+
+			}
+			else if (convertedInput == index)
+			{
+				break;
+			}
+			else
+			{
+				Console.WriteLine($"\n**ERROR**\n    - Please enter a valid number between 1 and {index}.");
+			}
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	}
+
+}
+
+// Create a new staff member and add them to the staff list
+void addStaff()
+{
+    try
+    {
+		tags();
+        Console.WriteLine($"\n**Register New Staff**\n");
+
+        Console.WriteLine("Enter the name of the staff member");
+		string name = Console.ReadLine();
+
+		Staff newStaff = new Staff(name);
+		staffs.Add(newStaff);
+
+        Console.WriteLine($"Successfully added {name}");
+    }
+    catch (Exception)
+    {
+
+        throw;
+    }
+}
+
+// View all staff members on the staff list and edit individuals
+void viewStaff()
+{
+	tags();
+	Console.WriteLine("\n**All Staff**\n");
+	foreach (Staff staff in staffs)
+	{
+        Console.WriteLine($"    - {staff.Name}");
 	}
 }
 
+// Create a new customer and add to customer list
+void addCustomer()
+{
+    try
+    {
+        tags();
+        Console.WriteLine($"\n**Register New Customer**\n");
+
+        Console.WriteLine("Enter the name of the customer");
+        string name = Console.ReadLine();
+
+        Console.WriteLine("Enter the home address of the customer");
+		string address = Console.ReadLine();
+
+        Console.WriteLine("Enter the email address of the customer");
+		string email = Console.ReadLine();
+
+        Console.WriteLine("Enter the phone number of the customer");
+		string phone = Console.ReadLine();
+
+		Customer newCustomer = new Customer(name, address, email, phone);
+		customers.Add(newCustomer);
+
+        Console.WriteLine($"Successfully added {name}");
+    }
+    catch (Exception)
+    {
+
+        throw;
+    }
+}
+
+// View all customers in the customers list and go into more detail
+void viewCustomers()
+{
+	while (true)
+	{
+		tags();
+		Console.WriteLine("\n**All Customers**\n");
+		int index = 1;
+		foreach (Customer customer in customers)
+		{
+			Console.WriteLine($"    {index++}) {customer.Name}");
+		}
+		Console.WriteLine($"If you wish to view more in detail, enter the associated number or press \"{index}\" to exit");
+
+		string selection = Console.ReadLine();
+		int convertedSelection = int.Parse(selection);
+
+		tags();
+		if ( convertedSelection > 0 && convertedSelection < index)
+		{
+			Customer selectedCustomer = customers[convertedSelection - 1];
+			selectedCustomer.summary();
+
+            Console.WriteLine($"\nIf you wish to edit {selectedCustomer.Name}'s profile then press \"1\", else press any key");
+			selection = Console.ReadLine();
+			
+			if ( selection == "1")
+			{
+                Console.WriteLine("Enter the name of the customer");
+                selectedCustomer.Name = Console.ReadLine();
+
+                Console.WriteLine("Enter the home address of the customer");
+                selectedCustomer.Address = Console.ReadLine();
+
+                Console.WriteLine("Enter the email address of the customer");
+                selectedCustomer.Email = Console.ReadLine();
+
+                Console.WriteLine("Enter the phone number of the customer");
+                selectedCustomer.Phone = Console.ReadLine();
+
+                Console.WriteLine($"Successfully updated {selectedCustomer.Name}");
+            } 
+		} else if (convertedSelection == index)
+		{
+			break;
+		}
+	}
+}
 
 
 // Loop through menu dictionary and output all options to the user, wait for their input and run the associated function
@@ -53,6 +270,7 @@ while (true)
 {
 	try
 	{
+		tags();
 		Console.WriteLine($"\n**MENU**\nPlease pick an option:\n");
 		int index = 1;
 
@@ -71,7 +289,7 @@ while (true)
 			int intSelection = int.Parse( selection );
 
 			// Check to see if the user selected an item in that exists in the dictionary (excluding the additional exit)
-			if (intSelection > 0 && intSelection < index - 1)
+			if (intSelection > 0 && intSelection < index)
 			{
 				// Find the selected key from the dictionary to use its value pair function
 				List<string> keys = new List<string>(menuItems.Keys);

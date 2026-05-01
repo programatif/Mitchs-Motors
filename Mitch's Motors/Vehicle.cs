@@ -17,7 +17,8 @@ namespace Mitch_s_Motors
         public string Brand { get; set; }
         public int Year { get; set; }
 
-        // Constructor
+
+        // Constructors
         public Vehicle(string registration, string type, double price, string colour, int seats, double boot_space, string brand, int year)
         {
             Registration = registration;
@@ -30,7 +31,26 @@ namespace Mitch_s_Motors
             Year = year;
         }
 
+
         // Behaviours
+
+        // Return a dictionary of attributes to be used in code rather than output to the user, like the other summary does
+        public Dictionary<string, object> summary_dict()
+        {
+            Dictionary<string, object> summary = new Dictionary<string, object>
+            {
+                { "Registration", Registration },
+                { "Type", Type },
+                { "Price", Price },
+                { "Colour", Colour },
+                { "Seats", Seats },
+                { "Boot Space", Boot_space  },
+                { "Brand", Brand },
+                { "Year", Year }
+            };
+
+            return summary;
+        }
 
         // Output a full summary of everything in the class
         public void summary()
