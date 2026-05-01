@@ -16,10 +16,13 @@ Dictionary<string, Action> menuItems = new Dictionary<string, Action>
 {
 	{ "Register New Vehicle", addVehicle },
 	{ "View All Vehicles", viewVehicles },
+	{ "Remove Vehicle From System", deleteVehicle },
 	{ "Add New Staff Member", addStaff },
 	{ "View All Staff Members", viewStaff },
+	{ "Remove Staff Member From System", deleteStaff },
 	{ "Add New Customer", addCustomer },
-	{ "View All Customers", viewCustomers }
+	{ "View All Customers", viewCustomers },
+	{ "Remove Customer From System", deleteCustomer }
 };
 
 
@@ -264,6 +267,113 @@ void viewCustomers()
 	}
 }
 
+// Delete a vehicle
+void deleteVehicle()
+{
+	while (true)
+	{
+		tags();
+		int index = 1;
+		Console.WriteLine($"\n**Remove a Vehicle**\n");
+
+		foreach (Vehicle vehicle in vehicles)
+		{
+			Console.WriteLine($"    {index++}) {vehicle.Registration}");
+		}
+		Console.WriteLine($"\nSelect a vehicle that you want to remove, or press \"{index}\" to cancel");
+
+		string selection = Console.ReadLine();
+		int convertedSelection = int.Parse(selection);
+
+		if (convertedSelection > 0 && convertedSelection < index)
+		{
+			vehicles.RemoveAt(convertedSelection - 1);
+			Console.WriteLine("\nVehicle successfully removed from the system");
+			break;
+		}
+		else if (convertedSelection == index)
+		{
+			Console.WriteLine("\nCancelled");
+			break;
+		}
+		else
+		{
+			Console.WriteLine($"\n**ERROR**\n    - Please enter a valid vehicle or press \"{index}\" to cancel");
+		}
+	}
+}
+
+// Delete a Staff Member
+void deleteStaff()
+{
+    while (true)
+    {
+        tags();
+        int index = 1;
+        Console.WriteLine($"\n**Remove a Staff Member**\n");
+
+        foreach (Staff staff in staffs)
+        {
+            Console.WriteLine($"    {index++}) {staff.Name}");
+        }
+        Console.WriteLine($"\nSelect a staff that you want to remove, or press \"{index}\" to cancel");
+
+        string selection = Console.ReadLine();
+        int convertedSelection = int.Parse(selection);
+
+        if (convertedSelection > 0 && convertedSelection < index)
+        {
+            staffs.RemoveAt(convertedSelection - 1);
+            Console.WriteLine("\nStaff member successfully removed from the system");
+            break;
+        }
+        else if (convertedSelection == index)
+        {
+            Console.WriteLine("\nCancelled");
+            break;
+        }
+        else
+        {
+            Console.WriteLine($"\n**ERROR**\n    - Please enter a valid staff member or press \"{index}\" to cancel");
+        }
+    }
+}
+
+// Delete a customer from the system
+void deleteCustomer()
+{
+    while (true)
+    {
+        tags();
+        int index = 1;
+        Console.WriteLine($"\n**Remove a Customer**\n");
+
+        foreach (Customer customer in customers)
+        {
+            Console.WriteLine($"    {index++}) {customer.Name}");
+        }
+        Console.WriteLine($"\nSelect a customer that you want to remove, or press \"{index}\" to cancel");
+
+        string selection = Console.ReadLine();
+        int convertedSelection = int.Parse(selection);
+
+        if (convertedSelection > 0 && convertedSelection < index)
+        {
+            staffs.RemoveAt(convertedSelection - 1);
+            Console.WriteLine("\nCustomer successfully removed from the system");
+            break;
+        }
+        else if (convertedSelection == index)
+        {
+            Console.WriteLine("\nCancelled");
+            break;
+        }
+        else
+        {
+            Console.WriteLine($"\n**ERROR**\n    - Please enter a valid customer or press \"{index}\" to cancel");
+        }
+    }
+}
 
 // Loop through menu dictionary and output all options to the user, wait for their input and run the associated function
 while (true)
