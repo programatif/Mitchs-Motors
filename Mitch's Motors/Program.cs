@@ -16,13 +16,13 @@ Dictionary<string, Action> menuItems = new Dictionary<string, Action>
 {
 	{ "Register New Vehicle", addVehicle },
 	{ "View All Vehicles", viewVehicles },
-	{ "Remove Vehicle From System", deleteVehicle },
+	{ "Remove Vehicle From System\n", deleteVehicle },
 	{ "Add New Staff Member", addStaff },
 	{ "View All Staff Members", viewStaff },
-	{ "Remove Staff Member From System", deleteStaff },
+	{ "Remove Staff Member From System\n", deleteStaff },
 	{ "Add New Customer", addCustomer },
 	{ "View All Customers", viewCustomers },
-	{ "Remove Customer From System", deleteCustomer }
+	{ "Remove Customer From System\n", deleteCustomer }
 };
 
 
@@ -182,8 +182,11 @@ void viewStaff()
 	Console.WriteLine("\n**All Staff**\n");
 	foreach (Staff staff in staffs)
 	{
-        Console.WriteLine($"    - {staff.Name}");
+		staff.summary();
 	}
+
+    Console.WriteLine("\nPress any key to continue...");
+	Console.ReadLine();
 }
 
 // Create a new customer and add to customer list
@@ -226,9 +229,15 @@ void viewCustomers()
 		tags();
 		Console.WriteLine("\n**All Customers**\n");
 		int index = 1;
+		string warning = "";
 		foreach (Customer customer in customers)
 		{
-			Console.WriteLine($"    {index++}) {customer.Name}");
+			if (customer.Missed > 3)
+			{
+				warning = " - WARNING: This customer is not allowed to book any test drives";
+			} 
+
+			Console.WriteLine($"    {index++}) {customer.Name}{warning}");
 		}
 		Console.WriteLine($"If you wish to view more in detail, enter the associated number or press \"{index}\" to exit");
 

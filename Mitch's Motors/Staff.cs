@@ -21,7 +21,7 @@ namespace Mitch_s_Motors
         // Output a full summary of everything in the class
         public void summary()
         {
-            Console.WriteLine($"\n**Staff**\n    - Name: {Name}\n    - Available Now: {Currently_available}\n\n");
+            Console.WriteLine($"\n{Name}\n    - Available Now: {Currently_available}");
         }
     }
 }
