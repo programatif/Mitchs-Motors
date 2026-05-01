@@ -13,7 +13,7 @@ List<Staff> staffs = new List<Staff>();
 List<Booking> bookings = new List<Booking>();
 
 
-// Dictionary to store all menu options and their attached functions
+// Dictionary to store all menu options and their attached functions - stored this way to make updating easier and code smaller/simpler to manage
 Dictionary<string, Action> menuItems = new Dictionary<string, Action>
 {
 	{ "Register New Vehicle", addVehicle },
@@ -505,16 +505,164 @@ void viewBookings()
 		{
 			Console.WriteLine($"    {index++}) {booking.Customer.Name} - Status: {booking.Status}");
 		}
-		Console.WriteLine($"\nIf you wish to view more details, enter the number associated with the booking or press \"{index}\" to cancel");
+		Console.WriteLine($"\nIf you wish to view more details, edit or change a booking status, enter the number associated with the booking or press \"{index}\" to cancel");
 
 		string selected = Console.ReadLine();
 		int convertedSelected = int.Parse(selected);
 
 		if (convertedSelected > 0 && convertedSelected < index)
 		{
-			tags();
-			Booking selectedBooking = bookings[convertedSelected - 1];
-			selectedBooking.summary();
+			while (true)
+			{
+				tags();
+				Booking selectedBooking = bookings[convertedSelected - 1];
+				selectedBooking.summary();
+
+				Console.WriteLine($"\n\nSelect your desired action:\n    1) Update Status\n    2) Edit Booking\n    3) Exit");
+				string choice = Console.ReadLine();
+
+				if (choice == "1")
+				{
+					tags();
+                    Console.WriteLine($"**Change {selectedBooking.Customer.Name} | {selectedBooking.Date} Status**");
+
+					if (selectedBooking.Status == "Booked")
+					{
+						Console.WriteLine("    1) Begin Test Drive\n    2) Cancel Booking\n    3) Mark as Missed\n    4) Cancel");
+						string usrChoice = Console.ReadLine();
+
+						if (usrChoice == "1")
+						{
+							selectedBooking.start();
+						} else if (usrChoice == "2")
+						{
+							selectedBooking.cancel();
+						} else if (usrChoice == "3")
+						{
+							selectedBooking.missed();
+						} else
+						{
+                            Console.WriteLine("\nCancelled");
+						}
+					} else if (selectedBooking.Status == "Active")
+					{
+                        Console.WriteLine("    1) End Test Drive\n    2) Cancel");
+						string usrChoice = Console.ReadLine();
+
+						if (usrChoice == "1")
+						{
+							selectedBooking.end();
+						} else
+						{
+                            Console.WriteLine("\nCancelled");
+						}
+					} else
+					{
+                        Console.WriteLine($"\nThis booking is currently marked as {selectedBooking.Status}, therefore it's status cannot be updated");
+					}
+					
+				} else if (choice == "2")
+				{
+					tags();
+                    Console.WriteLine($"**Edit {selectedBooking.Customer.Name} | {selectedBooking.Date} Booking**");
+
+                    // Get users choices to update booking
+                    bool runnable = vehicles.Count > 0 && customers.Count > 0 && staffs.Count > 0;
+                    if (!runnable)
+                    {
+                        Console.WriteLine($"\nPlease make sure there is at least one Staff, Customer and Vehicle in the system before attempting to make a booking.\n\nPress any key to continue...");
+                        Console.ReadLine();
+                        return;
+                    }
+
+                    DateTime selectDate;
+                    Vehicle selectVehicle;
+                    Customer selectCustomer;
+                    Staff selectStaff;
+
+                    Console.WriteLine("What is the date and time of the booking? (YYYY-MM-DD HH:SS)");
+                    string date = Console.ReadLine();
+                    selectDate = DateTime.Parse(date);
+
+                    while (true)
+                    {
+                        index = 1;
+                        Console.WriteLine("\nSelect the number of the vehicle you wish to use:");
+                        foreach (Vehicle vehicle in vehicles)
+                        {
+                            Console.WriteLine($"    {index++}) {vehicle.Registration}");
+                        }
+                        string selection = Console.ReadLine();
+                        int convertedSelection = int.Parse(selection);
+
+                        if (convertedSelection > 0 && convertedSelection < index)
+                        {
+                            selectVehicle = vehicles[convertedSelection - 1];
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"\n**ERROR**\nPlease enter a valid vehicle number between 1 and {index}.");
+                        }
+                    }
+
+
+                    while (true)
+                    {
+                        index = 1;
+                        Console.WriteLine("\nSelect the number of the Customer for this booking:");
+                        foreach (Customer customer in customers)
+                        {
+                            Console.WriteLine($"    {index++}) {customer.Name}");
+                        }
+                        string selection = Console.ReadLine();
+                        int convertedSelection = int.Parse(selection);
+
+                        if (convertedSelection > 0 && convertedSelection < index)
+                        {
+                            selectCustomer = customers[convertedSelection - 1];
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"\n**ERROR**\nPlease enter a valid customer number between 1 and {index}.");
+                        }
+                    }
+
+
+                    while (true)
+                    {
+                        index = 1;
+                        Console.WriteLine("\nSelect the number of the Staff member for this booking:");
+                        foreach (Staff staff in staffs)
+                        {
+                            Console.WriteLine($"    {index++}) {staff.Name}");
+                        }
+                        string selection = Console.ReadLine();
+                        int convertedSelection = int.Parse(selection);
+
+                        if (convertedSelection > 0 && convertedSelection < index)
+                        {
+                            selectStaff = staffs[convertedSelection - 1];
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"\n**ERROR**\nPlease enter a valid staff number between 1 and {index}.");
+                        }
+                    }
+
+					selectedBooking.Date = selectDate;
+					selectedBooking.Vehicle = selectVehicle;
+					selectedBooking.Customer = selectCustomer;
+					selectedBooking.Staff = selectStaff;
+
+                    Console.WriteLine("\nBooking successfully updated.");
+                } else
+				{
+					break;
+				}
+			}
 		}
 		else if (convertedSelected == index)
 		{
