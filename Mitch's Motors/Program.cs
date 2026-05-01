@@ -1,8 +1,10 @@
 ﻿using Mitch_s_Motors;
 using System.Collections;
 using System.Drawing;
+using System.Net.Security;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // Initialise lists to store all user-created objects in memory to be called and used in the menu
 List<Vehicle> vehicles = new List<Vehicle>();
@@ -22,7 +24,9 @@ Dictionary<string, Action> menuItems = new Dictionary<string, Action>
 	{ "Remove Staff Member From System\n", deleteStaff },
 	{ "Add New Customer", addCustomer },
 	{ "View All Customers", viewCustomers },
-	{ "Remove Customer From System\n", deleteCustomer }
+	{ "Remove Customer From System\n", deleteCustomer },
+	{ "Create A Booking", addBooking },
+	{ "View and Manage Bookings\n", viewBookings }
 };
 
 
@@ -382,6 +386,146 @@ void deleteCustomer()
             Console.WriteLine($"\n**ERROR**\n    - Please enter a valid customer or press \"{index}\" to cancel");
         }
     }
+}
+
+
+// Bookings
+
+// Create bookings and save to list
+void addBooking()
+{
+	tags();
+	int index = 1;
+    Console.WriteLine("**Create a Booking**");
+
+	bool runnable = vehicles.Count > 0 && customers.Count > 0 && staffs.Count > 0;
+	if (!runnable)
+	{
+        Console.WriteLine($"\nPlease make sure there is at least one Staff, Customer and Vehicle in the system before attempting to make a booking.\n\nPress any key to continue...");
+		Console.ReadLine();
+		return;
+	}
+
+	DateTime selectDate;
+	Vehicle selectVehicle;
+	Customer selectCustomer;
+	Staff selectStaff;
+
+    Console.WriteLine("What is the date and time of the booking? (YYYY-MM-DD HH:SS)");
+	string date = Console.ReadLine();
+	selectDate = DateTime.Parse(date);
+
+	while (true)
+	{
+        index = 1;
+        Console.WriteLine("\nSelect the number of the vehicle you wish to use:");
+		foreach (Vehicle vehicle in vehicles)
+		{
+			Console.WriteLine($"    {index++}) {vehicle.Registration}");
+		}
+		string selection = Console.ReadLine();
+		int convertedSelection = int.Parse(selection);
+
+		if (convertedSelection > 0 && convertedSelection < index)
+		{
+			selectVehicle = vehicles[convertedSelection - 1];
+			break;
+		}
+		else
+		{
+			Console.WriteLine($"\n**ERROR**\nPlease enter a valid vehicle number between 1 and {index}.");
+		}
+	}
+
+	
+    while (true)
+    {
+        index = 1;
+        Console.WriteLine("\nSelect the number of the Customer for this booking:");
+        foreach (Customer customer in customers)
+        {
+            Console.WriteLine($"    {index++}) {customer.Name}");
+        }
+        string selection = Console.ReadLine();
+        int convertedSelection = int.Parse(selection);
+
+        if (convertedSelection > 0 && convertedSelection < index)
+        {
+            selectCustomer = customers[convertedSelection - 1];
+			break;
+        }
+        else
+        {
+            Console.WriteLine($"\n**ERROR**\nPlease enter a valid customer number between 1 and {index}.");
+        }
+    }
+
+    
+    while (true)
+    {
+        index = 1;
+        Console.WriteLine("\nSelect the number of the Staff member for this booking:");
+        foreach (Staff staff in staffs)
+        {
+            Console.WriteLine($"    {index++}) {staff.Name}");
+        }
+        string selection = Console.ReadLine();
+        int convertedSelection = int.Parse(selection);
+
+        if (convertedSelection > 0 && convertedSelection < index)
+        {
+            selectStaff = staffs[convertedSelection - 1];
+			break;
+        }
+        else
+        {
+            Console.WriteLine($"\n**ERROR**\nPlease enter a valid staff number between 1 and {index}.");
+        }
+    }
+
+	Booking newBooking = new Booking(selectDate, selectVehicle, selectCustomer, selectStaff);
+	bookings.Add(newBooking);
+
+	tags();
+    Console.WriteLine("Successfully added booking:");
+	newBooking.summary();
+
+}
+
+// View all bookings and go into detail with them
+// TODO: add booking editing, mark as started, ended, missed and cancelled
+void viewBookings()
+{
+	while (true)
+	{
+		tags();
+		int index = 1;
+		Console.WriteLine("**View All Bookings**");
+		foreach (Booking booking in bookings)
+		{
+			Console.WriteLine($"    {index++}) {booking.Customer.Name} - Status: {booking.Status}");
+		}
+		Console.WriteLine($"\nIf you wish to view more details, enter the number associated with the booking or press \"{index}\" to cancel");
+
+		string selected = Console.ReadLine();
+		int convertedSelected = int.Parse(selected);
+
+		if (convertedSelected > 0 && convertedSelected < index)
+		{
+			tags();
+			Booking selectedBooking = bookings[convertedSelected - 1];
+			selectedBooking.summary();
+		}
+		else if (convertedSelected == index)
+		{
+			break;
+		}
+		else
+		{
+			Console.WriteLine($"\nPlease enter a valid option between 1 and {index}");
+		}
+	}
+
 }
 
 // Loop through menu dictionary and output all options to the user, wait for their input and run the associated function

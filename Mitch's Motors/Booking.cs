@@ -13,9 +13,9 @@ namespace Mitch_s_Motors
         public Customer Customer { get; set; }
         public Staff Staff { get; set; }
 
-        private string Status = "Booked";
-        private DateTime StartTime;
-        private DateTime EndTime;
+        public string Status { get; set; } = "Booked";
+        private DateTime StartTime {  get; set; }
+        private DateTime EndTime { get; set; }
 
         // Constructor
         public Booking(DateTime date, Vehicle vehicle, Customer customer, Staff staff)
@@ -100,7 +100,7 @@ namespace Mitch_s_Motors
             string startTime = Status == "Complete" || Status == "Active" ? StartTime.ToString() : "N/A";
             string endTime = Status == "Complete" ? EndTime.ToString() : "N/A";
 
-            Console.WriteLine($"\n**Booking**\n    - Booked Date: {Date}\n    - Vehicle: {Vehicle.Registration}\n    - Customer: {Customer.Name}\n    - Customer Contact: {Customer.Email}\n    - Staff: {Staff.Name}\n    - Current Status: {Status}\n    - Session Started: {startTime}\n    - Session Ended: {endTime}");
+            Console.WriteLine($"\n**Booking {Customer.Name}**\n    - Booked Date: {Date}\n    - Vehicle: {Vehicle.Registration}\n    - Customer: {Customer.Name}\n    - Customer Contact: {Customer.Email}\n    - Staff: {Staff.Name}\n    - Current Status: {Status}\n    - Session Started: {startTime}\n    - Session Ended: {endTime}");
         }
 
     }
