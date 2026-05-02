@@ -175,24 +175,25 @@ void viewVehicles()
 					Console.WriteLine($"    {index++}) {info}: {selectedVehicle.summary_dict()[info]}");
 				}
 
-                confirm();
+				string usrSelection = notNullInput("\nEnter \"1\" to edit this vehicle, enter \"2\" to exit");
+				// Edit vehicle information
+				if (usrSelection == "1")
+				{
+					tags();
+                    Console.WriteLine($"**Update Vehicle {selectedVehicle.Registration}**\n");
+                    selectedVehicle.Registration = notNullInput("Enter Registration: ");
+                    selectedVehicle.Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
+                    selectedVehicle.Price = convertDouble("Enter Price: ");
+                    selectedVehicle.Colour = notNullInput("Enter Colour: ");
+                    selectedVehicle.Seats = convertInt("Enter Number of Seats: ");
+                    selectedVehicle.Boot_space = convertDouble("Enter Boot Size (Liters): ");
+                    selectedVehicle.Brand = notNullInput("Enter Brand: ");
+                    selectedVehicle.Year = convertInt("Enter Year: ");
 
-
-                // TODO: Finish editing vehicles - works other than getting correct datatype to save the input as
-
-                //Console.WriteLine($"If you wish to edit any detials about this car, press the associated number. Else press \"{index}\".");
-
-                //string secondSelect = Console.ReadLine();
-                //int convertedSecondSelect = int.Parse(secondSelect);
-
-                //if (convertedSecondSelect > 0 && convertedSecondSelect < index)
-                //{
-                //	tags();
-                //	Console.WriteLine($"What should {keys[convertedSecondSelect - 1]} be updated to");
-                //	string update = Console.ReadLine();
-                //	selectedVehicle
-                //}
-
+                    Console.WriteLine($"\nSuccessfully updated vehicle {selectedVehicle.Registration}");
+					confirm();
+                }
+                
             }
 			else if (convertedInput == index)
 			{
@@ -463,11 +464,22 @@ void addBooking()
 	Customer selectCustomer;
 	Staff selectStaff;
 
-    Console.WriteLine("What is the date and time of the booking? (YYYY-MM-DD HH:SS)");
-	string date = Console.ReadLine();
-	selectDate = DateTime.Parse(date);
+    while (true)
+    {
+        string date = notNullInput("What is the date and time of the booking? (YYYY-MM-DD HH:MM)");
 
-	while (true)
+        try
+        {
+            selectDate = DateTime.Parse(date);
+            break;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine($"Failed to convert {date} to date, make sure you follow the format YYYY-MM-DD HH:MM");
+        }
+    }
+
+    while (true)
 	{
         index = 1;
         Console.WriteLine("\nVehicles:");
@@ -544,13 +556,54 @@ void addBooking()
         }
     }
 
-	Booking newBooking = new Booking(selectDate, selectVehicle, selectCustomer, selectStaff);
-	bookings.Add(newBooking);
+	List<Booking> closeBookings = new List<Booking>();
+	List<string> conflicts = new List<string>();
 
-	tags();
-    Console.WriteLine("Successfully added booking:");
-	newBooking.summary();
-    confirm();
+	foreach (Booking booking in bookings)
+	{
+        if ((booking.Date - selectDate).TotalMinutes < 60 && (selectDate - booking.Date).TotalMinutes < 60)
+        {
+			closeBookings.Add(booking);
+        }
+    }
+
+	foreach (Booking booking in closeBookings)
+	{
+		if (booking.Vehicle == selectVehicle)
+		{
+			conflicts.Add($"Vehicle is in use at {booking.Date}");
+		}
+
+		if (booking.Staff == selectStaff)
+		{
+			conflicts.Add($"Staff member is busy at {booking.Date}");
+		}
+
+		if (booking.Customer == selectCustomer)
+		{
+			conflicts.Add($"Customer is bsuy at {booking.Date}");
+		}
+	}
+
+	if (!conflicts.Any())
+	{
+		Booking newBooking = new Booking(selectDate, selectVehicle, selectCustomer, selectStaff);
+		bookings.Add(newBooking);
+
+		tags();
+		Console.WriteLine("Successfully added booking:");
+		newBooking.summary();
+		confirm();
+	} else
+	{
+		tags();
+        Console.WriteLine($"\n**WARNING**\n\nThere were {conflicts.Count} conflicts for this booking's time slot:");
+		foreach (string conflict in conflicts)
+		{
+            Console.WriteLine($"    - {conflict}");
+		}
+		confirm();
+	}
 
 }
 
