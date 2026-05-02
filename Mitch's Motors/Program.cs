@@ -118,7 +118,16 @@ void addVehicle()
         Console.WriteLine($"\n**Register New Vehicle**\n");
 
 		string Registration = notNullInput("Enter Registration: ");
-		string Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
+
+        foreach (Vehicle vehicle in vehicles)
+        {
+            if (vehicle.Registration == Registration)
+            {
+                throw new Exception($"A vehicle with registration {Registration} already exists.");
+            }
+        }
+
+        string Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
 		double Price = convertDouble("Enter Price: ");
 		string Colour = notNullInput("Enter Colour: ");
 		int Seats = convertInt("Enter Number of Seats: ");
@@ -126,6 +135,7 @@ void addVehicle()
 		string Brand = notNullInput("Enter Brand: ");
 		int Year = convertInt("Enter Year: ");
 
+		
         Vehicle new_vehicle = new Vehicle(Registration, Type, Price, Colour, Seats, Boot_space, Brand, Year);
 		vehicles.Add( new_vehicle );
 
@@ -179,19 +189,38 @@ void viewVehicles()
 				// Edit vehicle information
 				if (usrSelection == "1")
 				{
-					tags();
-                    Console.WriteLine($"**Update Vehicle {selectedVehicle.Registration}**\n");
-                    selectedVehicle.Registration = notNullInput("Enter Registration: ");
-                    selectedVehicle.Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
-                    selectedVehicle.Price = convertDouble("Enter Price: ");
-                    selectedVehicle.Colour = notNullInput("Enter Colour: ");
-                    selectedVehicle.Seats = convertInt("Enter Number of Seats: ");
-                    selectedVehicle.Boot_space = convertDouble("Enter Boot Size (Liters): ");
-                    selectedVehicle.Brand = notNullInput("Enter Brand: ");
-                    selectedVehicle.Year = convertInt("Enter Year: ");
+					try
+					{
+                        tags();
+                        Console.WriteLine($"**Update Vehicle {selectedVehicle.Registration}**\n");
+                        string Registration = notNullInput("Enter Registration: ");
+                        foreach (Vehicle vehicle in vehicles)
+                        {
+                            if (vehicle.Registration == Registration)
+                            {
+                                throw new Exception($"A vehicle with registration {Registration} already exists.");
+                            }
+                        }
+                        selectedVehicle.Registration = Registration;
 
-                    Console.WriteLine($"\nSuccessfully updated vehicle {selectedVehicle.Registration}");
-					confirm();
+                        selectedVehicle.Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
+                        selectedVehicle.Price = convertDouble("Enter Price: ");
+                        selectedVehicle.Colour = notNullInput("Enter Colour: ");
+                        selectedVehicle.Seats = convertInt("Enter Number of Seats: ");
+                        selectedVehicle.Boot_space = convertDouble("Enter Boot Size (Liters): ");
+                        selectedVehicle.Brand = notNullInput("Enter Brand: ");
+                        selectedVehicle.Year = convertInt("Enter Year: ");
+
+                        Console.WriteLine($"\nSuccessfully updated vehicle {selectedVehicle.Registration}");
+                        confirm();
+                    }
+					catch (Exception e)
+					{
+						tags();
+						Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
+						confirm();
+					}
+					
                 }
                 
             }
