@@ -1,9 +1,11 @@
 ﻿using Mitch_s_Motors;
 using System.Collections;
 using System.Drawing;
+using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // Initialise lists to store all user-created objects in memory to be called and used in the menu
@@ -36,7 +38,76 @@ Dictionary<string, Action> menuItems = new Dictionary<string, Action>
 static void tags()
 {
     Console.WriteLine("\n######################################################\n");
-} 
+}
+
+// Confirmation message to pause output until user has confirmed they have read the content on screen
+static void confirm()
+{
+	Console.WriteLine("\nPress enter to continue...");
+	Console.ReadLine();
+}
+
+// Commonly used validation to confirm that inputs are not null and gracefully handle errors
+static string notNullInput(string title)
+{
+	while (true)
+	{
+		Console.WriteLine(title);
+		string input = Console.ReadLine();
+
+		if (string.IsNullOrWhiteSpace(input))
+		{
+			tags();
+            Console.WriteLine($"\n**ERROR**\n    - Input cannot be blank, please try again");
+			confirm();
+		} else
+		{
+			return input;
+		}
+	}
+}
+
+// Commonly used validation to confirm that an input is not null, and can be converted to an integer and gracefully handle any errors
+static int convertInt(string title)
+{
+	while (true)
+	{
+		string input = notNullInput(title);
+
+		try
+		{
+			int converted = int.Parse(input);
+			return converted;
+		}
+		catch (Exception e)
+		{
+			tags();
+            Console.WriteLine($"\n**ERROR**\n    - {input} is not a number, please try again");
+			confirm();
+		}
+	}
+}
+
+// Commonly used validation to confirm that an input is not null, and can be convered into a double and gracefully handle any errors
+static double convertDouble(string title)
+{
+    while (true)
+    {
+        string input = notNullInput(title);
+
+        try
+        {
+            double converted = double.Parse(input);
+            return converted;
+        }
+        catch (Exception e)
+        {
+            tags();
+            Console.WriteLine($"\n**ERROR**\n    - {input} is not a number, please try again");
+            confirm();
+        }
+    }
+}
 
 // Create a new vehicle and save it in the vehicles list
 void addVehicle()
@@ -46,40 +117,27 @@ void addVehicle()
 		tags();
         Console.WriteLine($"\n**Register New Vehicle**\n");
 
-        Console.WriteLine("Enter Registration: ");
-        string Registration = Console.ReadLine();
-
-        Console.WriteLine("Enter Type (e.g., Sedan, SUV): ");
-        string Type = Console.ReadLine();
-
-        Console.WriteLine("Enter Price: ");
-        double Price = double.Parse(Console.ReadLine());
-
-        Console.WriteLine("Enter Colour: ");
-        string Colour = Console.ReadLine();
-
-        Console.WriteLine("Enter Number of Seats: ");
-        int Seats = int.Parse(Console.ReadLine());
-
-        Console.WriteLine("Enter Boot Space (Liters): ");
-        double Boot_space = double.Parse(Console.ReadLine());
-
-        Console.WriteLine("Enter Brand: ");
-        string Brand = Console.ReadLine();
-
-        Console.WriteLine("Enter Year: ");
-        int Year = int.Parse(Console.ReadLine());
+		string Registration = notNullInput("Enter Registration: ");
+		string Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
+		double Price = convertDouble("Enter Price: ");
+		string Colour = notNullInput("Enter Colour: ");
+		int Seats = convertInt("Enter Number of Seats: ");
+		double Boot_space = convertDouble("Enter Boot Size (Liters): ");
+		string Brand = notNullInput("Enter Brand: ");
+		int Year = convertInt("Enter Year: ");
 
         Vehicle new_vehicle = new Vehicle(Registration, Type, Price, Colour, Seats, Boot_space, Brand, Year);
 		vehicles.Add( new_vehicle );
 
-        Console.WriteLine("Vehicle Successfully Registered");
+        Console.WriteLine("\nVehicle Successfully Registered");
+        confirm();
     }
-	catch (Exception)
+	catch (Exception e)
 	{
-
-		throw;
-	}
+		tags();
+        Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
+        confirm();
+    }
 }
 
 // Loop through and output all vehicles on the vehicles list, also filter down to individual vehicles
@@ -101,10 +159,7 @@ void viewVehicles()
 				}
 			}
 
-			Console.WriteLine($"\nIf you wish to view details about a single car, enter its associated number - or press \"{index}\" to exit");
-
-			string input = Console.ReadLine();
-			int convertedInput = int.Parse(input);
+			int convertedInput = convertInt($"\nIf you wish to view details about a single car, enter its associated number - or press \"{index}\" to exit.");
 
 			if (convertedInput > 0 && convertedInput < index)
 			{
@@ -112,7 +167,6 @@ void viewVehicles()
 
 				index = 1;
 
-				Console.WriteLine("\n");
 				tags();
 				List<string> keys = selectedVehicle.summary_dict().Keys.ToList();
 
@@ -121,37 +175,42 @@ void viewVehicles()
 					Console.WriteLine($"    {index++}) {info}: {selectedVehicle.summary_dict()[info]}");
 				}
 
+                confirm();
 
-				// TODO: Finish editing vehicles - works other than getting correct datatype to save the input as
 
-				//Console.WriteLine($"If you wish to edit any detials about this car, press the associated number. Else press \"{index}\".");
+                // TODO: Finish editing vehicles - works other than getting correct datatype to save the input as
 
-				//string secondSelect = Console.ReadLine();
-				//int convertedSecondSelect = int.Parse(secondSelect);
+                //Console.WriteLine($"If you wish to edit any detials about this car, press the associated number. Else press \"{index}\".");
 
-				//if (convertedSecondSelect > 0 && convertedSecondSelect < index)
-				//{
-				//	tags();
-				//	Console.WriteLine($"What should {keys[convertedSecondSelect - 1]} be updated to");
-				//	string update = Console.ReadLine();
-				//	selectedVehicle
-				//}
+                //string secondSelect = Console.ReadLine();
+                //int convertedSecondSelect = int.Parse(secondSelect);
 
-			}
+                //if (convertedSecondSelect > 0 && convertedSecondSelect < index)
+                //{
+                //	tags();
+                //	Console.WriteLine($"What should {keys[convertedSecondSelect - 1]} be updated to");
+                //	string update = Console.ReadLine();
+                //	selectedVehicle
+                //}
+
+            }
 			else if (convertedInput == index)
 			{
 				break;
 			}
 			else
 			{
+				tags();
 				Console.WriteLine($"\n**ERROR**\n    - Please enter a valid number between 1 and {index}.");
-			}
+                confirm();
+            }
 		}
-		catch (Exception)
+		catch (Exception e)
 		{
-
-			throw;
-		}
+			tags();
+            Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
+            confirm();
+        }
 	}
 
 }
@@ -164,18 +223,19 @@ void addStaff()
 		tags();
         Console.WriteLine($"\n**Register New Staff**\n");
 
-        Console.WriteLine("Enter the name of the staff member");
-		string name = Console.ReadLine();
+		string name = notNullInput("Enter the name of the staff member");
 
 		Staff newStaff = new Staff(name);
 		staffs.Add(newStaff);
 
-        Console.WriteLine($"Successfully added {name}");
+        Console.WriteLine($"\nSuccessfully added {name}");
+        confirm();
     }
-    catch (Exception)
+    catch (Exception e)
     {
-
-        throw;
+		tags();
+        Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
+        confirm();
     }
 }
 
@@ -189,8 +249,7 @@ void viewStaff()
 		staff.summary();
 	}
 
-    Console.WriteLine("\nPress any key to continue...");
-	Console.ReadLine();
+    confirm();
 }
 
 // Create a new customer and add to customer list
@@ -201,27 +260,22 @@ void addCustomer()
         tags();
         Console.WriteLine($"\n**Register New Customer**\n");
 
-        Console.WriteLine("Enter the name of the customer");
-        string name = Console.ReadLine();
-
-        Console.WriteLine("Enter the home address of the customer");
-		string address = Console.ReadLine();
-
-        Console.WriteLine("Enter the email address of the customer");
-		string email = Console.ReadLine();
-
-        Console.WriteLine("Enter the phone number of the customer");
-		string phone = Console.ReadLine();
+		string name = notNullInput("Enter the name of the customer: ");
+		string address = notNullInput("Enter the home address of the customer: ");
+		string email = notNullInput("Enter the email address of the customer: ");
+		string phone = notNullInput("Enter the phone number of the customer: ");
 
 		Customer newCustomer = new Customer(name, address, email, phone);
 		customers.Add(newCustomer);
 
-        Console.WriteLine($"Successfully added {name}");
+        Console.WriteLine($"\nSuccessfully added {name}");
+        confirm();
     }
-    catch (Exception)
+    catch (Exception e)
     {
-
-        throw;
+		tags();
+        Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
+        confirm();
     }
 }
 
@@ -243,10 +297,8 @@ void viewCustomers()
 
 			Console.WriteLine($"    {index++}) {customer.Name}{warning}");
 		}
-		Console.WriteLine($"If you wish to view more in detail, enter the associated number or press \"{index}\" to exit");
 
-		string selection = Console.ReadLine();
-		int convertedSelection = int.Parse(selection);
+		int convertedSelection = convertInt($"If you wish to view more in detail, enter the associated number or press \"{index}\" to exit");
 
 		tags();
 		if ( convertedSelection > 0 && convertedSelection < index)
@@ -255,23 +307,17 @@ void viewCustomers()
 			selectedCustomer.summary();
 
             Console.WriteLine($"\nIf you wish to edit {selectedCustomer.Name}'s profile then press \"1\", else press any key");
-			selection = Console.ReadLine();
+			string selection = Console.ReadLine();
 			
 			if ( selection == "1")
 			{
-                Console.WriteLine("Enter the name of the customer");
-                selectedCustomer.Name = Console.ReadLine();
+				selectedCustomer.Name = notNullInput("Enter the name of the customer: ");
+				selectedCustomer.Address = notNullInput("Enter the home address of the customer: ");
+				selectedCustomer.Email = notNullInput("Enter the email address of the customer: ");
+				selectedCustomer.Phone = notNullInput("Enter the phone number of the customer: ");
 
-                Console.WriteLine("Enter the home address of the customer");
-                selectedCustomer.Address = Console.ReadLine();
-
-                Console.WriteLine("Enter the email address of the customer");
-                selectedCustomer.Email = Console.ReadLine();
-
-                Console.WriteLine("Enter the phone number of the customer");
-                selectedCustomer.Phone = Console.ReadLine();
-
-                Console.WriteLine($"Successfully updated {selectedCustomer.Name}");
+                Console.WriteLine($"\nSuccessfully updated {selectedCustomer.Name}");
+                confirm();
             } 
 		} else if (convertedSelection == index)
 		{
@@ -293,16 +339,15 @@ void deleteVehicle()
 		{
 			Console.WriteLine($"    {index++}) {vehicle.Registration}");
 		}
-		Console.WriteLine($"\nSelect a vehicle that you want to remove, or press \"{index}\" to cancel");
 
-		string selection = Console.ReadLine();
-		int convertedSelection = int.Parse(selection);
+		int convertedSelection = convertInt($"\nSelect a vehicle that you want to remove, or press \"{index}\" to cancel");
 
 		if (convertedSelection > 0 && convertedSelection < index)
 		{
 			vehicles.RemoveAt(convertedSelection - 1);
 			Console.WriteLine("\nVehicle successfully removed from the system");
-			break;
+            confirm();
+            break;
 		}
 		else if (convertedSelection == index)
 		{
@@ -311,8 +356,10 @@ void deleteVehicle()
 		}
 		else
 		{
+			tags();
 			Console.WriteLine($"\n**ERROR**\n    - Please enter a valid vehicle or press \"{index}\" to cancel");
-		}
+            confirm();
+        }
 	}
 }
 
@@ -329,25 +376,27 @@ void deleteStaff()
         {
             Console.WriteLine($"    {index++}) {staff.Name}");
         }
-        Console.WriteLine($"\nSelect a staff that you want to remove, or press \"{index}\" to cancel");
 
-        string selection = Console.ReadLine();
-        int convertedSelection = int.Parse(selection);
+		int convertedSelection = convertInt($"\nSelect a staff that you want to remove, or press \"{index}\" to cancel");
 
         if (convertedSelection > 0 && convertedSelection < index)
         {
             staffs.RemoveAt(convertedSelection - 1);
             Console.WriteLine("\nStaff member successfully removed from the system");
+            confirm();
             break;
         }
         else if (convertedSelection == index)
         {
             Console.WriteLine("\nCancelled");
+            confirm();
             break;
         }
         else
         {
+			tags();
             Console.WriteLine($"\n**ERROR**\n    - Please enter a valid staff member or press \"{index}\" to cancel");
+            confirm();
         }
     }
 }
@@ -365,25 +414,27 @@ void deleteCustomer()
         {
             Console.WriteLine($"    {index++}) {customer.Name}");
         }
-        Console.WriteLine($"\nSelect a customer that you want to remove, or press \"{index}\" to cancel");
 
-        string selection = Console.ReadLine();
-        int convertedSelection = int.Parse(selection);
+		int convertedSelection = convertInt($"\nSelect a customer that you want to remove, or press \"{index}\" to cancel");
 
         if (convertedSelection > 0 && convertedSelection < index)
         {
             staffs.RemoveAt(convertedSelection - 1);
             Console.WriteLine("\nCustomer successfully removed from the system");
+            confirm();
             break;
         }
         else if (convertedSelection == index)
         {
             Console.WriteLine("\nCancelled");
+            confirm();
             break;
         }
         else
         {
+			tags();
             Console.WriteLine($"\n**ERROR**\n    - Please enter a valid customer or press \"{index}\" to cancel");
+            confirm();
         }
     }
 }
@@ -401,9 +452,10 @@ void addBooking()
 	bool runnable = vehicles.Count > 0 && customers.Count > 0 && staffs.Count > 0;
 	if (!runnable)
 	{
-        Console.WriteLine($"\nPlease make sure there is at least one Staff, Customer and Vehicle in the system before attempting to make a booking.\n\nPress any key to continue...");
-		Console.ReadLine();
-		return;
+		tags();
+        Console.WriteLine($"\nPlease make sure there is at least one Staff, Customer and Vehicle in the system before attempting to make a booking.");
+        confirm();
+        return;
 	}
 
 	DateTime selectDate;
@@ -418,13 +470,13 @@ void addBooking()
 	while (true)
 	{
         index = 1;
-        Console.WriteLine("\nSelect the number of the vehicle you wish to use:");
+        Console.WriteLine("\nVehicles:");
 		foreach (Vehicle vehicle in vehicles)
 		{
 			Console.WriteLine($"    {index++}) {vehicle.Registration}");
 		}
-		string selection = Console.ReadLine();
-		int convertedSelection = int.Parse(selection);
+
+		int convertedSelection = convertInt("\nEnter the number of the vehicle you wish to use: ");
 
 		if (convertedSelection > 0 && convertedSelection < index)
 		{
@@ -433,30 +485,37 @@ void addBooking()
 		}
 		else
 		{
+			tags();
 			Console.WriteLine($"\n**ERROR**\nPlease enter a valid vehicle number between 1 and {index}.");
-		}
+            confirm();
+        }
 	}
 
 	
     while (true)
     {
         index = 1;
-        Console.WriteLine("\nSelect the number of the Customer for this booking:");
+        Console.WriteLine("\nEligible Customers for this booking (if over 3 missed test drives then they become ineligible and will not be listed here):");
         foreach (Customer customer in customers)
         {
-            Console.WriteLine($"    {index++}) {customer.Name}");
+			if (customer.isEligible())
+			{
+				Console.WriteLine($"    {index++}) {customer.Name}");
+			}
         }
-        string selection = Console.ReadLine();
-        int convertedSelection = int.Parse(selection);
 
-        if (convertedSelection > 0 && convertedSelection < index)
+		int convertedSelection = convertInt("\nEnter the number of the customer for the booking");
+
+		if (convertedSelection > 0 && convertedSelection < index)
         {
             selectCustomer = customers[convertedSelection - 1];
 			break;
         }
         else
         {
+			tags();
             Console.WriteLine($"\n**ERROR**\nPlease enter a valid customer number between 1 and {index}.");
+            confirm();
         }
     }
 
@@ -464,13 +523,13 @@ void addBooking()
     while (true)
     {
         index = 1;
-        Console.WriteLine("\nSelect the number of the Staff member for this booking:");
+        Console.WriteLine("\nStaff Members");
         foreach (Staff staff in staffs)
         {
             Console.WriteLine($"    {index++}) {staff.Name}");
         }
-        string selection = Console.ReadLine();
-        int convertedSelection = int.Parse(selection);
+
+		int convertedSelection = convertInt("\nEnter the number of the Staff member for this booking:");
 
         if (convertedSelection > 0 && convertedSelection < index)
         {
@@ -479,7 +538,9 @@ void addBooking()
         }
         else
         {
+			tags();
             Console.WriteLine($"\n**ERROR**\nPlease enter a valid staff number between 1 and {index}.");
+            confirm();
         }
     }
 
@@ -489,11 +550,11 @@ void addBooking()
 	tags();
     Console.WriteLine("Successfully added booking:");
 	newBooking.summary();
+    confirm();
 
 }
 
 // View all bookings and go into detail with them
-// TODO: add booking editing, mark as started, ended, missed and cancelled
 void viewBookings()
 {
 	while (true)
@@ -505,10 +566,8 @@ void viewBookings()
 		{
 			Console.WriteLine($"    {index++}) {booking.Customer.Name} - Status: {booking.Status}");
 		}
-		Console.WriteLine($"\nIf you wish to view more details, edit or change a booking status, enter the number associated with the booking or press \"{index}\" to cancel");
 
-		string selected = Console.ReadLine();
-		int convertedSelected = int.Parse(selected);
+		int convertedSelected = convertInt($"\nIf you wish to view more details, edit or change a booking status, enter the number associated with the booking or press \"{index}\" to cancel");
 
 		if (convertedSelected > 0 && convertedSelected < index)
 		{
@@ -518,8 +577,7 @@ void viewBookings()
 				Booking selectedBooking = bookings[convertedSelected - 1];
 				selectedBooking.summary();
 
-				Console.WriteLine($"\n\nSelect your desired action:\n    1) Update Status\n    2) Edit Booking\n    3) Exit");
-				string choice = Console.ReadLine();
+				string choice = notNullInput($"\n\nSelect your desired action:\n    1) Update Status\n    2) Edit Booking\n    3) Exit");
 
 				if (choice == "1")
 				{
@@ -543,7 +601,7 @@ void viewBookings()
 						} else
 						{
                             Console.WriteLine("\nCancelled");
-						}
+                        }
 					} else if (selectedBooking.Status == "Active")
 					{
                         Console.WriteLine("    1) End Test Drive\n    2) Cancel");
@@ -560,8 +618,10 @@ void viewBookings()
 					{
                         Console.WriteLine($"\nThis booking is currently marked as {selectedBooking.Status}, therefore it's status cannot be updated");
 					}
-					
-				} else if (choice == "2")
+
+                    confirm();
+
+                } else if (choice == "2")
 				{
 					tags();
                     Console.WriteLine($"**Edit {selectedBooking.Customer.Name} | {selectedBooking.Date} Booking**");
@@ -570,8 +630,8 @@ void viewBookings()
                     bool runnable = vehicles.Count > 0 && customers.Count > 0 && staffs.Count > 0;
                     if (!runnable)
                     {
-                        Console.WriteLine($"\nPlease make sure there is at least one Staff, Customer and Vehicle in the system before attempting to make a booking.\n\nPress any key to continue...");
-                        Console.ReadLine();
+                        Console.WriteLine($"\nPlease make sure there is at least one Staff, Customer and Vehicle in the system before attempting to make a booking.");
+                        confirm();
                         return;
                     }
 
@@ -580,20 +640,33 @@ void viewBookings()
                     Customer selectCustomer;
                     Staff selectStaff;
 
-                    Console.WriteLine("What is the date and time of the booking? (YYYY-MM-DD HH:SS)");
-                    string date = Console.ReadLine();
-                    selectDate = DateTime.Parse(date);
+					while (true)
+					{
+						string date = notNullInput("What is the date and time of the booking? (YYYY-MM-DD HH:MM)");
+
+						try
+						{
+							selectDate = DateTime.Parse(date);
+							break;
+						}
+						catch (Exception e)
+						{
+							Console.WriteLine($"Failed to convert {date} to date, make sure you follow the format YYYY-MM-DD HH:MM");
+						}
+					}
+
+                    
 
                     while (true)
                     {
                         index = 1;
-                        Console.WriteLine("\nSelect the number of the vehicle you wish to use:");
+                        Console.WriteLine("\nVehicles:");
                         foreach (Vehicle vehicle in vehicles)
                         {
                             Console.WriteLine($"    {index++}) {vehicle.Registration}");
                         }
-                        string selection = Console.ReadLine();
-                        int convertedSelection = int.Parse(selection);
+
+						int convertedSelection = convertInt("\nSelect the number of the vehicle you wish to use:");
 
                         if (convertedSelection > 0 && convertedSelection < index)
                         {
@@ -602,7 +675,9 @@ void viewBookings()
                         }
                         else
                         {
+							tags();
                             Console.WriteLine($"\n**ERROR**\nPlease enter a valid vehicle number between 1 and {index}.");
+                            confirm();
                         }
                     }
 
@@ -610,13 +685,13 @@ void viewBookings()
                     while (true)
                     {
                         index = 1;
-                        Console.WriteLine("\nSelect the number of the Customer for this booking:");
+                        Console.WriteLine("\nCustomers:");
                         foreach (Customer customer in customers)
                         {
                             Console.WriteLine($"    {index++}) {customer.Name}");
                         }
-                        string selection = Console.ReadLine();
-                        int convertedSelection = int.Parse(selection);
+
+						int convertedSelection = convertInt("\nSelect the number of the Customer for this booking");
 
                         if (convertedSelection > 0 && convertedSelection < index)
                         {
@@ -625,7 +700,9 @@ void viewBookings()
                         }
                         else
                         {
+							tags();
                             Console.WriteLine($"\n**ERROR**\nPlease enter a valid customer number between 1 and {index}.");
+                            confirm();
                         }
                     }
 
@@ -633,13 +710,13 @@ void viewBookings()
                     while (true)
                     {
                         index = 1;
-                        Console.WriteLine("\nSelect the number of the Staff member for this booking:");
+                        Console.WriteLine("\nStaff:");
                         foreach (Staff staff in staffs)
                         {
                             Console.WriteLine($"    {index++}) {staff.Name}");
                         }
-                        string selection = Console.ReadLine();
-                        int convertedSelection = int.Parse(selection);
+
+						int convertedSelection = convertInt("\nSelect the number of the Staff member for this booking:");
 
                         if (convertedSelection > 0 && convertedSelection < index)
                         {
@@ -648,7 +725,9 @@ void viewBookings()
                         }
                         else
                         {
+							tags();
                             Console.WriteLine($"\n**ERROR**\nPlease enter a valid staff number between 1 and {index}.");
+                            confirm();
                         }
                     }
 
@@ -658,6 +737,7 @@ void viewBookings()
 					selectedBooking.Staff = selectStaff;
 
                     Console.WriteLine("\nBooking successfully updated.");
+                    confirm();
                 } else
 				{
 					break;
@@ -670,8 +750,10 @@ void viewBookings()
 		}
 		else
 		{
+			tags();
 			Console.WriteLine($"\nPlease enter a valid option between 1 and {index}");
-		}
+            confirm();
+        }
 	}
 
 }
@@ -682,7 +764,7 @@ while (true)
 	try
 	{
 		tags();
-		Console.WriteLine($"\n**MENU**\nPlease pick an option:\n");
+		Console.WriteLine($"\n**MENU**");
 		int index = 1;
 
 		foreach (string item in menuItems.Keys)
@@ -692,38 +774,35 @@ while (true)
 
 		Console.WriteLine($"    {index}) Exit");
 
-		// Take in the users selection
-		string selection = Console.ReadLine();
-		try
-		{
-			// Attempt to convert it to an integer but catch and allow the user to re-try if they make a mistake
-			int intSelection = int.Parse( selection );
+		// Take in the users selection and convert it to an integer but catch and allow the user to re-try if they make a mistake
 
-			// Check to see if the user selected an item in that exists in the dictionary (excluding the additional exit)
-			if (intSelection > 0 && intSelection < index)
-			{
-				// Find the selected key from the dictionary to use its value pair function
-				List<string> keys = new List<string>(menuItems.Keys);
-				string key = keys[intSelection - 1];
+		int intSelection = convertInt("\nPlease pick an option:");
 
-				// Run the function
-				menuItems[key]();
-			} else if (intSelection == index) // If the user selected exit
-			{
-                Console.WriteLine($"\n**INFO**\nBye Bye!\n\n");
-				break;
-			}
-			else
-			{
-				Console.WriteLine($"\nPlease pick a valid option between 1 and {index}");
-			}
-		} catch (Exception e)
+		// Check to see if the user selected an item in that exists in the dictionary (excluding the additional exit)
+		if (intSelection > 0 && intSelection < index)
 		{
-			throw;
+			// Find the selected key from the dictionary to use its value pair function
+			List<string> keys = new List<string>(menuItems.Keys);
+			string key = keys[intSelection - 1];
+
+			// Run the function
+			menuItems[key]();
+		} else if (intSelection == index) // If the user selected exit
+		{
+			break;
 		}
+		else
+		{
+			tags();
+			Console.WriteLine($"\nPlease pick a valid option between 1 and {index}");
+            confirm();
+        }
 
-	} catch (Exception)
+
+	} catch (Exception e)
 	{
-		throw;
-	}
+		tags();
+        Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
+        confirm();
+    }
 }
