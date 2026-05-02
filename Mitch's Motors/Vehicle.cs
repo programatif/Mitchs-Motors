@@ -34,28 +34,10 @@ namespace Mitch_s_Motors
 
         // Behaviours
 
-        // Return a dictionary of attributes to be used in code rather than output to the user, like the other summary does
-        public Dictionary<string, object> summary_dict()
-        {
-            Dictionary<string, object> summary = new Dictionary<string, object>
-            {
-                { "Registration", Registration },
-                { "Type", Type },
-                { "Price", Price },
-                { "Colour", Colour },
-                { "Seats", Seats },
-                { "Boot Space", Boot_space  },
-                { "Brand", Brand },
-                { "Year", Year }
-            };
-
-            return summary;
-        }
-
         // Output a full summary of everything in the class
         public void summary()
         {
-            Console.WriteLine($"\n**Vehicle**\n    - Registration: {Registration}\n    - Type: {Type}\n    - Price: {Price}\n    - Colour: {Colour}\n    - Steats: {Seats}\n    - Boot Size: {Boot_space}\n    - Brand: {Brand}\n    - Year Created: {Year}\n\n");
+            Console.WriteLine($"\n**Vehicle**\n    - Registration: {Registration}\n    - Type: {Type}\n    - Price: £{Price}\n    - Colour: {Colour}\n    - Steats: {Seats}\n    - Boot Size: {Boot_space}l\n    - Brand: {Brand}\n    - Year Created: {Year}\n\n");
         }
 
 

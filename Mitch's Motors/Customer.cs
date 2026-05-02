@@ -12,7 +12,7 @@ namespace Mitch_s_Motors
         public string Email { get; set; }
         // phone stored as string to account for potential extra characters, such as "+44"
         public string Phone { get; set; }
-        public int Missed { get; set; } = 0;
+        private int Missed { get; set; } = 0;
 
         // Constructor 
         public Customer(string name, string address, string email, string phone)
