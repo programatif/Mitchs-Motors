@@ -83,7 +83,16 @@ static int convertInt(string title)
 		try
 		{
 			int converted = int.Parse(input);
-			return converted;
+			if (converted >= 0)
+			{
+				return converted;
+			} else
+			{
+				tags();
+                Console.WriteLine($"\n**ERROR**\n    - input cannot be a negative number, please try again");
+				confirm();
+			}
+			
 		}
 		catch (Exception)
 		{
@@ -105,7 +114,15 @@ static double convertDouble(string title)
         try
         {
             double converted = double.Parse(input);
-            return converted;
+			if (converted >= 0)
+			{
+				return converted;
+			} else
+			{
+				tags();
+                Console.WriteLine($"\n**ERROR**\n    - input cannot be a negative number, please try again");
+				confirm();
+			}
         }
         catch (Exception e)
         {
@@ -114,6 +131,49 @@ static double convertDouble(string title)
             confirm();
         }
     }
+}
+
+string getVehicleType()
+{
+    // List of all vehicle types offered by Mitch's Motors when creating or updating a vehicle
+    List<string> VehicleTypes = [
+        "Hatchback",
+		"Saloon",
+		"SUV",
+		"Coupe",
+		"Convertible",
+		"Van"
+	];
+
+    while (true)
+	{
+		try
+		{
+            Console.WriteLine("Select the vehicle type:");
+			int index = 1;
+			foreach (string type in VehicleTypes)
+			{
+                Console.WriteLine($"    {index++}) {type}");
+			}
+            
+			int selected = convertInt("Enter the associated number of the type you wish to select");
+
+			// Validate the user selected a number that was in the menu, index will be one higher than the last in the list output
+			if (selected > 0 && selected < index)
+			{
+				return VehicleTypes[selected - 1];
+			} else
+			{
+				throw new Exception("Please choose a valid vehicle type from the menu");
+			}
+		}
+		catch (Exception e)
+		{
+			tags();
+			Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
+			confirm();
+		}
+	}
 }
 
 // Create a new vehicle and save it in the vehicles list
@@ -137,8 +197,9 @@ void addVehicle()
         }
 
 		// Get all other attributes for a vehicle with validation
-        string Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
-		double Price = convertDouble("Enter Price: ");
+		//string Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
+		string Type = getVehicleType();
+        double Price = convertDouble("Enter Price: ");
 		string Colour = notNullInput("Enter Colour: ");
 		int Seats = convertInt("Enter Number of Seats: ");
 		double Boot_space = convertDouble("Enter Boot Size (Liters): ");
@@ -232,7 +293,8 @@ void viewVehicles()
 
 						// Get all vehicle fields and save to the vehicle attribute
 
-                        selectedVehicle.Type = notNullInput($"Enter Type (currently {selectedVehicle.Type}): ");
+						//selectedVehicle.Type = notNullInput($"Enter Type (currently {selectedVehicle.Type}): ");
+						selectedVehicle.Type = getVehicleType();
                         selectedVehicle.Price = convertDouble($"Enter Price (currently £{selectedVehicle.Price}): ");
                         selectedVehicle.Colour = notNullInput($"Enter Colour (currently {selectedVehicle.Colour}): ");
                         selectedVehicle.Seats = convertInt($"Enter Number of Seats (currently {selectedVehicle.Seats}): ");

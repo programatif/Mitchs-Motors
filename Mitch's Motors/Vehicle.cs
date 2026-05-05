@@ -17,7 +17,6 @@ namespace Mitch_s_Motors
         public string Brand { get; set; }
         public int Year { get; set; }
 
-
         // Constructors
         public Vehicle(string registration, string type, double price, string colour, int seats, double boot_space, string brand, int year)
         {
