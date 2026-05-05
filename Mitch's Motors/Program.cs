@@ -133,6 +133,7 @@ static double convertDouble(string title)
     }
 }
 
+// Get the users vehicle selection by outputting a menu of vehicle types
 string getVehicleType()
 {
     // List of all vehicle types offered by Mitch's Motors when creating or updating a vehicle
@@ -145,30 +146,37 @@ string getVehicleType()
 		"Van"
 	];
 
+	// Loop to ensure that any mistakes will be caught
     while (true)
 	{
 		try
 		{
             Console.WriteLine("Select the vehicle type:");
 			int index = 1;
+			// Loop over the list and output the vehicle type with an associated number from the index variable
 			foreach (string type in VehicleTypes)
 			{
                 Console.WriteLine($"    {index++}) {type}");
 			}
             
+			// Get the users selection as an integer
 			int selected = convertInt("Enter the associated number of the type you wish to select");
 
 			// Validate the user selected a number that was in the menu, index will be one higher than the last in the list output
 			if (selected > 0 && selected < index)
 			{
+				// Return the vehicle type string from the list using the chosen index value (-1 since the output starts at 1 but the index starts at 0 so the user will always enter one ahead of the true index)
+				// Return to break out of the loop so the user isn't stuck re-entring their selection
 				return VehicleTypes[selected - 1];
 			} else
 			{
+				// Create an error if in invalid option chosen
 				throw new Exception("Please choose a valid vehicle type from the menu");
 			}
 		}
 		catch (Exception e)
 		{
+			// Output this error to the user and stay in the loop to allow the user to re-try
 			tags();
 			Console.WriteLine($"\n**ERROR**\n    - {e.Message}");
 			confirm();
@@ -197,7 +205,6 @@ void addVehicle()
         }
 
 		// Get all other attributes for a vehicle with validation
-		//string Type = notNullInput("Enter Type (e.g., Van, SUV, Hatchback...): ");
 		string Type = getVehicleType();
         double Price = convertDouble("Enter Price: ");
 		string Colour = notNullInput("Enter Colour: ");
@@ -293,7 +300,6 @@ void viewVehicles()
 
 						// Get all vehicle fields and save to the vehicle attribute
 
-						//selectedVehicle.Type = notNullInput($"Enter Type (currently {selectedVehicle.Type}): ");
 						selectedVehicle.Type = getVehicleType();
                         selectedVehicle.Price = convertDouble($"Enter Price (currently £{selectedVehicle.Price}): ");
                         selectedVehicle.Colour = notNullInput($"Enter Colour (currently {selectedVehicle.Colour}): ");
